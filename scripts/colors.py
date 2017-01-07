@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 from bluepy import btle
 import struct
@@ -9,7 +9,11 @@ import sys
 bb8 = BB8_driver.Sphero()
 
 print "connecting...\n"
-bb8.connect()
+try:
+    bb8.connect()
+except:
+    print 'dsfsfdds'
+    sys.exit(1)
 
 print "starting...\n"
 bb8.start()

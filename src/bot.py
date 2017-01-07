@@ -1,3 +1,5 @@
+#!/usr/bin/env python2
+
 from irc import *
 from bb8 import *
 import os
