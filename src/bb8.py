@@ -6,6 +6,14 @@ from bluepy import btle
 import struct
 import BB8_driver
 
+FASTEST = 255
+VERY_FAST = 210
+FAST = 160
+MEDIUM = 100
+SLOW = 50
+VERY_SLOW = 32
+SLOWEST = 8
+
 COLORS = {
         'red': (255, 0, 0, 0, False),
         'yellow': (255, 255, 0, 0, False),
@@ -74,6 +82,39 @@ class BB8:
         for k, v in COLORS.iteritems():
             self.irc.send(self.channel, k, debug)
     
+    def turn_right(self, debug=False):
+        for _ in xrange(5):
+            self.sphero.roll(150, 90, 1, True)
+            self.sphero.set_heading(90, True)
+            time.sleep(1)
+
+    def turn_left(self, debug=False):
+        for _ in xrange(5):
+            self.sphero.roll(150, 270, 1, True)
+            self.sphero.set_heading(270, True)
+            time.sleep(1)
+
+    def stop(self, debug=False):
+        self.sphero.roll(0, 0, 0, True)
+        time.sleep(.5)
+
+    def _roll(self, speed, direction, duration, debug=False):
+        self.sphero.roll(speed, direction, 1, True)
+        time.sleep(duration)
+        self.stop()
+
+    def roll_back(self, speed=SLOW, duration=1.5, debug=False):
+        self._roll(speed, 180, duration) # 180 for backwards
+
+    def roll_fwd(self, speed=SLOW, duration=1.5, debug=False):
+        self._roll(speed, 0, duration) # 0 for fwd
+
+    def roll_left(self, speed=SLOW, duration=1.5, debug=False):
+        self._roll(speed, 270, duration) # 270 left
+
+    def roll_right(self, speed=SLOW, duration=1.5, debug=False):
+        self._roll(speed, 90, duration) # 270 right
+
     def respond(self, buff, debug=False):
         if debug or self.debug:
             print "responding...\n"
@@ -96,8 +137,6 @@ class BB8:
             elif "favorite video game" in buff and "bb8" in buff:
                 self.irc.send(self.channel, "jeffrey tells me undertale is quite good", debug)
                 self.irc.send(self.channel, "i also hear a lot of talk about clash of clans", debug)
-            elif "bb8" in buff:
-                self.irc.send(self.channel, "u talkin bout me bruh", debug)
             elif "@bb8" in buff:
                 self.irc.send(self.channel, "u talkin to me bruh", debug)
 
@@ -119,4 +158,8 @@ class BB8:
                     self.list_colors()
                 elif cmd == '!color' and arg:
                     self.change_color(arg)
+                elif cmd == '!forward':
+                    self.roll_fwd()
+                elif cmd == '!backward':
+                    self.roll_back()
 
