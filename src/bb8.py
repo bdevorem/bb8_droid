@@ -1,4 +1,5 @@
 import socket
+import time
 import sys
 from irc import *
 from bluepy import btle
@@ -28,6 +29,8 @@ class BB8:
 
     def connect(self, debug=False):
         self.irc.connect(self.server, self.channel, self.nick, self.password, debug)
+        if debug:
+            print "connecting to irc...\n"
 
     def bt_connect(self, debug=True):
         if self.bt == True:
@@ -41,17 +44,14 @@ class BB8:
 
             if debug:
                 print "connecting...\n"
-            self.sphero.start()
-            if debug:
-                print "starting...\n"
-
+            # self.sphero.start()
             self.bt = True
             self.irc.send(self.channel, "success!", debug)
             time.sleep(2)
 
     def bt_disconnect(self, debug=True):
         if self.bt == True:
-            self.sphero.join()
+            # self.sphero.join()
             self.sphero.disconnect()
             self.bt = False
             self.irc.send(self.channel, "success!", debug)
@@ -64,17 +64,15 @@ class BB8:
         if self.bt == True:
             try:
                 self.sphero.set_rgb_led(*COLORS[color])
+                self.irc.send(self.channel, "success!", debug)
             except KeyError:
                 self.irc.send(self.channel, "failure! try !listcolors", debug)
         else:
             self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
     def list_colors(self, debug=False):
-        colors = ''
         for k, v in COLORS.iteritems():
-            colors = colors + k + '\n'
-
-        self.irc.send(self.channel, colors, debug)
+            self.irc.send(self.channel, k, debug)
     
     def respond(self, buff, debug=False):
         if debug or self.debug:
@@ -111,7 +109,8 @@ class BB8:
             except:
                 pass
 
-            if cmd.startswith(!):
+            if cmd.startswith('!'):
+
                 if cmd == '!connect':
                     self.bt_connect()
                 elif cmd == '!disconnect':
