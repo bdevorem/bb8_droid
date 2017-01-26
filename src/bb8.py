@@ -83,23 +83,19 @@ class BB8:
         for k, v in COLORS.iteritems():
             self.irc.send(self.channel, k, debug)
     
-    def turn_right(self, debug=False):
+    def turn(self, direction, debug=False):
         if self.bt == True:
             try:
-                for _ in xrange(5):
-                    self.sphero.roll(150, 90, 1, True)
-                    self.sphero.set_heading(90, True)
-                    time.sleep(1)
-        else:
-            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
-
-    def turn_left(self, debug=False):
-        if self.bt == True:
-            try:
-                for _ in xrange(5):
-                    self.sphero.roll(150, 270, 1, True)
-                    self.sphero.set_heading(270, True)
-                    time.sleep(1)
+                if direction == 'right':
+                    for _ in xrange(5):
+                        self.sphero.roll(150, 90, 1, True)
+                        self.sphero.set_heading(90, True)
+                        time.sleep(1)
+                elif direction == 'left':
+                    for _ in xrange(5):
+                        self.sphero.roll(150, 270, 1, True)
+                        self.sphero.set_heading(270, True)
+                        time.sleep(1)
         else:
             self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
@@ -116,31 +112,17 @@ class BB8:
         time.sleep(duration)
         self.stop()
 
-    def roll_back(self, speed=SLOW, duration=1.5, debug=False):
+    def roll(self, speed=SLOW, duration=1.5, direction, debug=False):
         if self.bt == True:
             try:
-                self._roll(speed, 180, duration) # 180 for backwards
-        else:
-            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
-
-    def roll_fwd(self, speed=SLOW, duration=1.5, debug=False):
-        if self.bt == True:
-            try:
-                self._roll(speed, 0, duration) # 0 for fwd
-        else:
-            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
-
-    def roll_left(self, speed=SLOW, duration=1.5, debug=False):
-        if self.bt == True:
-            try:
-                self._roll(speed, 270, duration) # 270 left
-        else:
-            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
-
-    def roll_right(self, speed=SLOW, duration=1.5, debug=False):
-        if self.bt == True:
-            try:
-                self._roll(speed, 90, duration) # 270 right
+                if direction == 'back':
+                    self._roll(speed, 180, duration) # 180 for backwards
+                elif direction == 'fwd':
+                    self._roll(speed, 0, duration) # 0 for fwd
+                elif direction == 'left':
+                    self._roll(speed, 270, duration) # 270 left
+                elif direction == 'right':
+                    self._roll(speed, 90, duration) # 270 right
         else:
             self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
@@ -188,19 +170,19 @@ class BB8:
                 elif cmd == '!color' and arg:
                     self.change_color(arg)
                 elif cmd == '!forward':
-                    self.roll_fwd()
+                    self.roll(direction='fwd')
                 elif cmd == '!backward':
-                    self.roll_back()
+                    self.roll(direction='back')
                 elif cmd == '!right':
-                    self.roll_right()
+                    self.roll(direction='right')
                 elif cmd == '!left':
-                    self.roll_left()
+                    self.roll(direction='left')
                 elif cmd == '!turn':
                     num = randrange(0, 100)
                     if num < 50:
-                        self.turn_left()
+                        self.turn(direction='left')
                     else 
-                        self.turn_right()
+                        self.turn(direction='right')
                 elif cmd == '!help':
                     self.irc.send(self.channel, "I can do the following...", debug)
                     cmds = "connect, disconnect, listcolors, color, forward, backward, right, left, turn"
