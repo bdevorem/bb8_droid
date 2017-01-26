@@ -20,9 +20,9 @@ class IRC:
     def connect(self, server, channel, nick, password, debug=False):
 	if debug:
             print "connecting to " + server
-
         # TODO: error check all this
         self.irc.connect((server, 6667))
+        print "here"
         self.irc.send("PASS " + password + "\r\n") 
         self.irc.send("NICK " + nick + "\r\n")
         self.irc.send("USER " + nick + " " + server + " bb8 : " + nick + "\r\n") 

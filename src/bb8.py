@@ -1,5 +1,6 @@
 import socket
 import time
+import random
 import sys
 from irc import *
 from bluepy import btle
@@ -83,20 +84,32 @@ class BB8:
             self.irc.send(self.channel, k, debug)
     
     def turn_right(self, debug=False):
-        for _ in xrange(5):
-            self.sphero.roll(150, 90, 1, True)
-            self.sphero.set_heading(90, True)
-            time.sleep(1)
+        if self.bt == True:
+            try:
+                for _ in xrange(5):
+                    self.sphero.roll(150, 90, 1, True)
+                    self.sphero.set_heading(90, True)
+                    time.sleep(1)
+        else:
+            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
     def turn_left(self, debug=False):
-        for _ in xrange(5):
-            self.sphero.roll(150, 270, 1, True)
-            self.sphero.set_heading(270, True)
-            time.sleep(1)
+        if self.bt == True:
+            try:
+                for _ in xrange(5):
+                    self.sphero.roll(150, 270, 1, True)
+                    self.sphero.set_heading(270, True)
+                    time.sleep(1)
+        else:
+            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
     def stop(self, debug=False):
-        self.sphero.roll(0, 0, 0, True)
-        time.sleep(.5)
+        if self.bt == True:
+            try:
+                self.sphero.roll(0, 0, 0, True)
+                time.sleep(.5)
+        else:
+            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
     def _roll(self, speed, direction, duration, debug=False):
         self.sphero.roll(speed, direction, 1, True)
@@ -104,16 +117,32 @@ class BB8:
         self.stop()
 
     def roll_back(self, speed=SLOW, duration=1.5, debug=False):
-        self._roll(speed, 180, duration) # 180 for backwards
+        if self.bt == True:
+            try:
+                self._roll(speed, 180, duration) # 180 for backwards
+        else:
+            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
     def roll_fwd(self, speed=SLOW, duration=1.5, debug=False):
-        self._roll(speed, 0, duration) # 0 for fwd
+        if self.bt == True:
+            try:
+                self._roll(speed, 0, duration) # 0 for fwd
+        else:
+            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
     def roll_left(self, speed=SLOW, duration=1.5, debug=False):
-        self._roll(speed, 270, duration) # 270 left
+        if self.bt == True:
+            try:
+                self._roll(speed, 270, duration) # 270 left
+        else:
+            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
     def roll_right(self, speed=SLOW, duration=1.5, debug=False):
-        self._roll(speed, 90, duration) # 270 right
+        if self.bt == True:
+            try:
+                self._roll(speed, 90, duration) # 270 right
+        else:
+            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
 
     def respond(self, buff, debug=False):
         if debug or self.debug:
@@ -162,4 +191,18 @@ class BB8:
                     self.roll_fwd()
                 elif cmd == '!backward':
                     self.roll_back()
+                elif cmd == '!right':
+                    self.roll_right()
+                elif cmd == '!left':
+                    self.roll_left()
+                elif cmd == '!turn':
+                    num = randrange(0, 100)
+                    if num < 50:
+                        self.turn_left()
+                    else 
+                        self.turn_right()
+                elif cmd == '!help':
+                    self.irc.send(self.channel, "I can do the following...", debug)
+                    cmds = "connect, disconnect, listcolors, color, forward, backward, right, left, turn"
+                    self.irc.send(self.channel, cmds, debug)
 
