@@ -77,7 +77,7 @@ class BB8:
             except KeyError:
                 self.irc.send(self.channel, "failure! try !listcolors", debug)
         else:
-            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
+            self.irc.send(self.channel, "failure! You gotta connect first!", debug)
 
     def list_colors(self, debug=False):
         for k, v in COLORS.iteritems():
@@ -96,23 +96,27 @@ class BB8:
                         self.sphero.roll(150, 270, 1, True)
                         self.sphero.set_heading(270, True)
                         time.sleep(1)
+            except:
+                pass
         else:
-            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
+            self.irc.send(self.channel, "failure! you gotta connect first", debug)
 
     def stop(self, debug=False):
         if self.bt == True:
             try:
                 self.sphero.roll(0, 0, 0, True)
                 time.sleep(.5)
+            except:
+                pass
         else:
-            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
+            self.irc.send(self.channel, "failure! you gotta connect first", debug)
 
     def _roll(self, speed, direction, duration, debug=False):
         self.sphero.roll(speed, direction, 1, True)
         time.sleep(duration)
         self.stop()
 
-    def roll(self, speed=SLOW, duration=1.5, direction, debug=False):
+    def roll(self, speed=SLOW, duration=1.5, direction='fwd', debug=False):
         if self.bt == True:
             try:
                 if direction == 'back':
@@ -123,8 +127,10 @@ class BB8:
                     self._roll(speed, 270, duration) # 270 left
                 elif direction == 'right':
                     self._roll(speed, 90, duration) # 270 right
+            except:
+                pass
         else:
-            self.irc.send(self.channel, "u gotta connect first u idiot", debug)
+            self.irc.send(self.channel, "failure! you gotta connect first", debug)
 
     def respond(self, buff, debug=False):
         if debug or self.debug:
@@ -181,7 +187,7 @@ class BB8:
                     num = randrange(0, 100)
                     if num < 50:
                         self.turn(direction='left')
-                    else 
+                    else:
                         self.turn(direction='right')
                 elif cmd == '!help':
                     self.irc.send(self.channel, "I can do the following...", debug)
