@@ -12,7 +12,7 @@ channel = config["channel"]
 nick = config["nick"]
 password = config["password"]
 
-debug = True
+debug = False
 
 if __name__ == '__main__':
     irc = IRC()
