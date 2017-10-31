@@ -18,7 +18,7 @@ class IRC:
         self.irc.send("PRIVMSG " + channel + " :" + msg + "\r\n")
  
     def connect(self, server, channel, nick, password, debug=False):
-	if debug:
+        if debug:
             print "connecting to " + server
         # TODO: error check all this
         self.irc.connect((server, 6667))
@@ -36,6 +36,8 @@ class IRC:
             self.irc.send('PONG ' + buff.split()[1] + '\r\n') 
 
     def recieve(self, debug=False):
+        if debug:
+            print "recieving..."
         buff = self.irc.recv(2040)
         self.pong(buff, debug)
         return buff
